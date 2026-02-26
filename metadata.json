@@ -1,0 +1,5 @@
+{
+  "name": "MobiCare AI - SLTMobitel ",
+  "description": "An intelligent, agentic customer support interface for SLTMOBITEL services using Google Gemini.",
+  "requestFramePermissions": []
+}
