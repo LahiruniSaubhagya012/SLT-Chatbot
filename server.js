@@ -8,11 +8,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = parseInt(process.env.PORT || "8080", 10);
+const PORT = parseInt(process.env.PORT || "10000", 10);
 
 app.use(express.json());
 
-// Cloud Run Health Check
+// Health check
 app.get("/health", (req, res) => res.status(200).send("OK"));
 
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
@@ -54,6 +54,7 @@ async function saveToFirestore(collection, data) {
   }
 }
 
+// API routes
 app.post("/api/firestore/chat_history", async (req, res) => {
   const result = await saveToFirestore("chat_history", req.body);
   res.json(result);
@@ -72,16 +73,16 @@ app.post("/api/firestore/reports", async (req, res) => {
 /* SERVE FRONTEND */
 const distPath = path.resolve(__dirname, "dist");
 
-// Serve static files from the dist directory
+// Serve static files
 app.use(express.static(distPath));
 
-// Fallback route for SPA - serves index.html for any unknown routes
-app.get("*", (req, res) => {
+// SPA fallback (Express 5 safe)
+app.use((req, res) => {
   const indexPath = path.join(distPath, "index.html");
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.status(404).send("Production build not found. Please run 'npm run build' first.");
+    res.status(404).send("Production build not found. Please run npm run build.");
   }
 });
 
